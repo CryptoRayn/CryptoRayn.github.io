@@ -1,12 +1,34 @@
-document.getElementById("claimButton").addEventListener("click", function () {
-  const messages = [
-    "¡Felicidades! Has recibido 10 satoshis 🎉",
-    "¡Buen intento! Inténtalo de nuevo en 5 minutos ⏳",
-    "¡Wow! Te ganaste 50 satoshis 🔥",
-    "Lo siento, sin recompensa esta vez 😢"
-  ];
-
-  const msg = messages[Math.floor(Math.random() * messages.length)];
-  document.getElementById("message").innerText = msg;
-});
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Faucet de Criptomonedas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>¡Reclama tus Criptomonedas!</h1>
+        <div id="faucet-form">
+            <label for="wallet-address">Tu Dirección de FaucetPay:</label>
+            <input type="text" id="wallet-address" placeholder="Ingresa tu dirección aquí">
+            <label for="coin">Selecciona la Criptomoneda:</label>
+            <select id="coin">
+                <option value="BTC">Bitcoin</option>
+                <option value="LTC">Litecoin</option>
+                <option value="DOGE">Dogecoin</option>
+                </select>
+            <div id="captcha-container">
+                <p>Por favor, completa el CAPTCHA.</p>
+            </div>
+            <button id="claim-button">Reclamar Ahora</button>
+            <p id="claim-message" class="hidden"></p>
+        </div>
+        <div id="loading-indicator" class="hidden">
+            Cargando...
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
 
