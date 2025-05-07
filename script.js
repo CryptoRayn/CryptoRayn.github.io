@@ -3,13 +3,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const emailInput = document.getElementById('email');
     const claimMessage = document.getElementById('claim-message');
     const loadingIndicator = document.getElementById('loading-indicator');
-    const welcomeForm = document.getElementById('welcome-form');
     const container = document.querySelector('.container');
 
-    // Animación sutil al cargar la página
-    setTimeout(() => {
-        container.classList.add('loaded');
-    }, 50); // Pequeño retraso para asegurar que la animación fadeIn del CSS se complete
+    // Añadimos la clase 'loaded' al contenedor cuando el contenido esté cargado
+    container.classList.add('loaded');
 
     claimButton.addEventListener('click', function() {
         const email = emailInput.value;
@@ -77,3 +74,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 700); // Duración de la animación
     }
 });
+
+function onRecaptchaSuccess() {
+    const claimButton = document.getElementById('claim-button');
+    claimButton.disabled = false;
+    claimButton.classList.add('recaptcha-ready');
+}
+
+function onRecaptchaExpired() {
+    const claimButton = document.getElementById('claim-button');
+    claimButton.disabled = true;
+    claimButton.classList.remove('recaptcha-ready');
+    alert('El reCAPTCHA ha expirado. Por favor, inténtalo de nuevo.');
+}
