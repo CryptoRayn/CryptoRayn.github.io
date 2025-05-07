@@ -29,6 +29,13 @@ body {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
     text-align: center;
     animation: fadeIn 1s ease-out;
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.container.loaded {
+    transform: translateY(0);
+    opacity: 1;
 }
 
 @keyframes fadeIn {
@@ -104,23 +111,45 @@ h1 {
     box-shadow: none;
 }
 
+#welcome-form button.loading {
+    text-indent: -9999px; /* Oculta el texto */
+    width: 80px; /* Ajusta el ancho para el spinner */
+    height: 40px; /* Ajusta la altura para el spinner */
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    animation: spin 1s linear infinite;
+    pointer-events: none; /* Evita clicks mientras carga */
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
 #claim-message {
     margin-top: 20px;
     font-weight: bold;
     color: #e67e22; /* Naranja llamativo para mensajes */
-    animation: pulse 1.5s ease-in-out infinite;
 }
 
-@keyframes pulse {
-    0% {
-        opacity: 0.7;
-    }
-    50% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0.7;
-    }
+.error-animation {
+    animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.success-animation {
+    animation: pulse-success 0.7s ease-in-out;
+}
+
+@keyframes pulse-success {
+    0% { transform: scale(1); opacity: 0.8; color: #e67e22; }
+    50% { transform: scale(1.1); opacity: 1; color: #2ecc71; }
+    100% { transform: scale(1); opacity: 0.8; color: #e67e22; }
 }
 
 .hidden {
@@ -131,14 +160,5 @@ h1 {
     margin-top: 20px;
     font-style: italic;
     color: #3498db; /* Azul brillante para el indicador */
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+    animation: spin 1s linear infinite; /* Reutilizamos la animación de spin */
 }
