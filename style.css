@@ -11,51 +11,56 @@ body {
 }
 
 @keyframes gradientAnimation {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .container {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, 0.9); /* Fondo blanco semi-transparente */
     padding: 40px;
     border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
     text-align: center;
-    animation: fadeIn 1s ease-out, slight-bounce 0.6s 0.2s ease-out forwards; /* Aquí el forwards podría ser problemático */
-    opacity: 0;
-    transform: translateY(-20px);
+    animation: slideIn 0.8s ease-out forwards; /* Animación de entrada con 'forwards' */
+    opacity: 0; /* Opacidad inicial */
+    transform: translateY(-20px); /* Posición inicial ligeramente abajo */
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes slight-bounce {
-    0% { transform: translateY(-20px); }
-    60% { transform: translateY(5px); }
-    80% { transform: translateY(-3px); }
-    100% { transform: translateY(0); }
+@keyframes slideIn {
+    0% { transform: translateY(-20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
 }
 
 h1 {
-    color: #2c3e50;
+    color: #2c3e50; /* Un azul oscuro elegante */
     margin-bottom: 30px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
     font-size: 2.5em;
-    animation: pulse-title 2s ease-in-out infinite alternate;
+    animation: pulse-title 2s ease-in-out infinite alternate; /* Animación sutil del título */
 }
 
 @keyframes pulse-title {
-    from { opacity: 0.8; transform: scale(1); }
-    to { opacity: 1; transform: scale(1.03); }
+    from {
+        opacity: 0.8;
+        transform: scale(1);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1.03);
+    }
 }
 
 #welcome-form label {
     display: block;
     margin-bottom: 8px;
-    color: #34495e;
+    color: #34495e; /* Otro tono de azul oscuro */
     font-weight: bold;
     opacity: 0.9;
 }
@@ -64,7 +69,7 @@ h1 {
     width: calc(100% - 22px);
     padding: 12px;
     margin-bottom: 20px;
-    border: 2px solid #3498db;
+    border: 2px solid #3498db; /* Azul más brillante para el borde */
     border-radius: 6px;
     box-sizing: border-box;
     font-size: 1em;
@@ -73,19 +78,19 @@ h1 {
 
 #welcome-form input[type="email"]:focus {
     outline: none;
-    border-color: #1abc9c;
-    box-shadow: 0 0 8px rgba(26, 188, 156, 0.7);
-    transform: scale(1.02);
+    border-color: #1abc9c; /* Verde turquesa al enfocar */
+    box-shadow: 0 0 8px rgba(26, 188, 156, 0.7); /* Sombra más intensa */
+    transform: scale(1.02); /* Ligeramente más grande al enfocar */
 }
 
 .g-recaptcha {
     margin-bottom: 25px;
-    transform: scale(0.95);
-    display: inline-block;
+    transform: scale(0.95); /* Pequeño ajuste de tamaño */
+    display: inline-block; /* Para centrar mejor */
 }
 
 #welcome-form button {
-    background-color: #2ecc71;
+    background-color: #2ecc71; /* Verde vibrante */
     color: white;
     padding: 14px 24px;
     border: none;
@@ -96,27 +101,27 @@ h1 {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-#welcome-form button:active {
+#welcome-form button:active { /* Estilo al tocar el botón */
     transform: scale(0.98);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 #welcome-form button:disabled {
-    background-color: #bdc3c7;
+    background-color: #bdc3c7; /* Gris claro para deshabilitado */
     cursor: not-allowed;
     transform: scale(1);
     box-shadow: none;
 }
 
 #welcome-form button.loading {
-    text-indent: -9999px;
-    width: 80px;
-    height: 40px;
+    text-indent: -9999px; /* Oculta el texto */
+    width: 80px; /* Ajusta el ancho para el spinner */
+    height: 40px; /* Ajusta la altura para el spinner */
     border-radius: 50%;
     border: 3px solid rgba(255, 255, 255, 0.3);
     border-top-color: #fff;
     animation: spin 1s linear infinite;
-    pointer-events: none;
+    pointer-events: none; /* Evita clicks mientras carga */
 }
 
 @keyframes spin {
@@ -128,14 +133,20 @@ h1 {
 }
 
 @keyframes pulse-button {
-    from { transform: scale(1); background-color: #2ecc71; }
-    to { transform: scale(1.05); background-color: #27ae60; }
+    from {
+        transform: scale(1);
+        background-color: #2ecc71;
+    }
+    to {
+        transform: scale(1.05);
+        background-color: #27ae60;
+    }
 }
 
 #claim-message {
     margin-top: 20px;
     font-weight: bold;
-    color: #e67e22;
+    color: #e67e22; /* Naranja llamativo para mensajes */
 }
 
 .error-animation {
@@ -165,6 +176,6 @@ h1 {
 #loading-indicator {
     margin-top: 20px;
     font-style: italic;
-    color: #3498db;
-    animation: spin 1s linear infinite;
+    color: #3498db; /* Azul brillante para el indicador */
+    animation: spin 1s linear infinite; /* Reutilizamos la animación de spin */
 }
