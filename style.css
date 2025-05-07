@@ -11,15 +11,9 @@ body {
 }
 
 @keyframes gradientAnimation {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .container {
@@ -28,9 +22,9 @@ body {
     border-radius: 12px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
     text-align: center;
-    animation: slideIn 0.8s ease-out forwards; /* Animación de entrada con 'forwards' */
-    opacity: 0; /* Opacidad inicial */
-    transform: translateY(-20px); /* Posición inicial ligeramente abajo */
+    /* animation: slideIn 0.8s ease-out forwards; */
+    opacity: 1; /* Aseguramos que sea visible sin animación */
+    transform: translateY(0); /* Aseguramos que esté en su posición final sin animación */
 }
 
 @keyframes slideIn {
@@ -47,14 +41,8 @@ h1 {
 }
 
 @keyframes pulse-title {
-    from {
-        opacity: 0.8;
-        transform: scale(1);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1.03);
-    }
+    from { opacity: 0.8; transform: scale(1); }
+    to { opacity: 1; transform: scale(1.03); }
 }
 
 #welcome-form label {
