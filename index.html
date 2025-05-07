@@ -11,8 +11,8 @@
     <div class="container">
         <h1>¡Reclama tus Criptomonedas!</h1>
         <div id="welcome-form">
-            <label for="wallet-address">Tu Dirección de FaucetPay:</label>
-            <input type="text" id="wallet-address" placeholder="Ingresa tu dirección de FaucetPay">
+            <label for="email">Tu Correo Electrónico de FaucetPay:</label>
+            <input type="email" id="email" placeholder="Ingresa tu correo electrónico de FaucetPay">
             <div class="g-recaptcha" data-sitekey="TU_CLAVE_DE_SITIO_RECAPTCHA"></div>
             <button id="claim-button" disabled>Reclamar Ahora</button>
             <p id="claim-message" class="hidden"></p>
@@ -31,9 +31,6 @@
             document.getElementById('claim-button').disabled = true;
             alert('El reCAPTCHA ha expirado. Por favor, inténtalo de nuevo.');
         }
-    </script>
-</body>
-</html>
     </script>
 </body>
 </html>
