@@ -1,17 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
     const claimButton = document.getElementById('claim-button');
-    const walletAddressInput = document.getElementById('wallet-address');
-    const coinSelect = document.getElementById('coin');
+    const emailInput = document.getElementById('email');
     const claimMessage = document.getElementById('claim-message');
     const loadingIndicator = document.getElementById('loading-indicator');
 
     claimButton.addEventListener('click', function() {
-        const walletAddress = walletAddressInput.value;
-        const selectedCoin = coinSelect.value;
-        const recaptchaResponse = grecaptcha.getResponse(); // Obtiene la respuesta del reCAPTCHA
+        const email = emailInput.value;
+        const recaptchaResponse = grecaptcha.getResponse();
 
-        if (!walletAddress) {
-            claimMessage.textContent = 'Por favor, ingresa tu dirección de FaucetPay.';
+        if (!email) {
+            claimMessage.textContent = 'Por favor, ingresa tu correo electrónico de FaucetPay.';
             claimMessage.classList.remove('hidden');
             return;
         }
@@ -31,9 +29,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                address: walletAddress,
-                coin: selectedCoin,
-                recaptchaResponse: recaptchaResponse // Envía la respuesta del reCAPTCHA
+                email: email,
+                recaptchaResponse: recaptchaResponse
             })
         })
         .then(response => response.json())
@@ -41,18 +38,17 @@ document.addEventListener('DOMContentLoaded', function() {
             loadingIndicator.classList.add('hidden');
             claimMessage.textContent = data.message || '¡Reclamo exitoso!';
             claimMessage.classList.remove('hidden');
-            // Opcionalmente, podrías limpiar el formulario o actualizar la UI
-            grecaptcha.reset(); // Resetea el reCAPTCHA para el siguiente reclamo
-            document.getElementById('claim-button').disabled = true; // Deshabilita el botón nuevamente
-            walletAddressInput.value = ''; // Limpia la dirección (opcional)
+            grecaptcha.reset();
+            document.getElementById('claim-button').disabled = true;
+            emailInput.value = '';
         })
         .catch(error => {
             loadingIndicator.classList.add('hidden');
             claimMessage.textContent = 'Ocurrió un error al procesar tu reclamo. Por favor, intenta de nuevo.';
             claimMessage.classList.remove('hidden');
             console.error('Error:', error);
-            grecaptcha.reset(); // Resetea el reCAPTCHA en caso de error
-            document.getElementById('claim-button').disabled = true; // Asegura que el botón esté deshabilitado
+            grecaptcha.reset();
+            document.getElementById('claim-button').disabled = true;
         });
     });
 });
