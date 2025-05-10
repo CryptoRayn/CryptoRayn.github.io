@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loadingIndicator.classList.remove('hidden');
         claimButton.classList.add('loading'); // Clase para cambiar el estilo del botón
 
-        fetch('/api/claim', { // Reemplaza '/api/claim' con la URL de tu backend
+        fetch('https://crypto-rayn-github-io.vercel.app/api/claim', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -43,8 +43,9 @@ document.addEventListener('DOMContentLoaded', function() {
             claimButton.classList.remove('loading');
             animateSuccess(claimMessage, data.message || '¡Reclamo exitoso!');
             grecaptcha.reset();
-            claimButton.disabled = true;
-            emailInput.value = '';
+            claimButton.disabled = false; // Habilitar el botón para futuros reclamos
+            // Aquí podríamos habilitar el botón "IR" para el Proceso C
+            // document.getElementById('botonIr').disabled = false;
         })
         .catch(error => {
             loadingIndicator.classList.add('hidden');
@@ -52,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
             animateError(claimMessage, 'Ocurrió un error al procesar tu reclamo. Por favor, intenta de nuevo.');
             console.error('Error:', error);
             grecaptcha.reset();
-            claimButton.disabled = true;
+            claimButton.disabled = false; // Habilitar el botón en caso de error para reintento
         });
     });
 
