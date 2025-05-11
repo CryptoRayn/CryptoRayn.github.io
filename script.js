@@ -1,114 +1,84 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const claimButton = document.getElementById('claim-button');
+document.addEventListener('DOMContentLoaded', () => {
     const emailInput = document.getElementById('email');
+    const captchaContainer = document.querySelector('.g-recaptcha');
+    const enterButton = document.getElementById('enterButton');
     const claimMessage = document.getElementById('claim-message');
     const loadingIndicator = document.getElementById('loading-indicator');
-    const container = document.querySelector('.container');
-    const recaptchaContainer = document.querySelector('.g-recaptcha');
-    let recaptchaSiteKey = null; // Inicializamos como null
+    const form = document.getElementById('welcome-form');
 
-    // Añadimos la clase 'loaded' al contenedor cuando el contenido esté cargado
-    container.classList.add('loaded');
+    // Reemplaza con tu clave de sitio de reCAPTCHA v2
+    const recaptchaSiteKey = 'TU_CLAVE_DE_SITIO_RECAPTCHA';
+    // Reemplaza con la URL de tu bin de JSONBin (con permiso de escritura si es necesario)
+    const jsonBinUrl = 'https://api.jsonbin.io/v3/b/TU_ID_DE_BIN';
+    // Reemplaza con tu clave secreta de JSONBin si tu bin es privado
+    const jsonBinSecretKey = '$2b$10$TU_CLAVE_SECRETA_JSONBIN'; // ¡MANTÉN ESTA CLAVE SEGURA!
 
-    // Obtener la clave del sitio desde el endpoint de la API
-    fetch('/api/recaptcha-site-key')
-      .then(response => response.json())
-      .then(data => {
-        recaptchaSiteKey = data.siteKey;
-        console.log("Clave del sitio reCAPTCHA obtenida del API:", recaptchaSiteKey);
+    window.enableButton = function() {
+        enterButton.disabled = false;
+        enterButton.classList.add('recaptcha-ready');
+    };
 
-        // Renderizar dinámicamente el reCAPTCHA con la clave obtenida
-        if (recaptchaContainer && recaptchaSiteKey) {
-          grecaptcha.render(recaptchaContainer, {
-            'sitekey': recaptchaSiteKey,
-            'callback': 'onRecaptchaSuccess',
-            'expired-callback': 'onRecaptchaExpired'
-          });
-        } else {
-          console.error('No se encontró el contenedor reCAPTCHA o no se pudo obtener la clave del sitio.');
-        }
-      })
-      .catch(error => {
-        console.error('Error al obtener la clave del sitio reCAPTCHA:', error);
-      });
+    window.disableButton = function() {
+        enterButton.disabled = true;
+        enterButton.classList.remove('recaptcha-ready');
+    };
 
-    claimButton.addEventListener('click', function() {
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
         const email = emailInput.value;
         const recaptchaResponse = grecaptcha.getResponse();
 
-        if (!email) {
-            animateError(claimMessage, 'Por favor, ingresa tu correo electrónico de FaucetPay.');
-            return;
-        }
-
         if (!recaptchaResponse) {
-            animateError(claimMessage, 'Por favor, completa el reCAPTCHA.');
+            claimMessage.textContent = 'Por favor, completa el captcha.';
+            claimMessage.classList.remove('hidden', 'success-animation');
+            claimMessage.classList.add('error-animation');
             return;
         }
 
-        // Animación al enviar la solicitud
+        enterButton.disabled = true;
+        enterButton.classList.add('loading');
         claimMessage.classList.add('hidden');
         loadingIndicator.classList.remove('hidden');
-        claimButton.classList.add('loading'); // Clase para cambiar el estilo del botón
 
-        fetch('/api/claim', {
+        const dataToSend = {
+            email: email,
+            recaptchaResponse: recaptchaResponse,
+            timestamp: new Date().toISOString()
+        };
+
+        fetch(jsonBinUrl, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-Master-Key': jsonBinSecretKey // Necesario si tu bin es privado
             },
-            body: JSON.stringify({
-                email: email,
-                recaptchaResponse: recaptchaResponse
-            })
+            body: JSON.stringify(dataToSend)
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
+            console.log('Datos enviados a JSONBin:', data);
             loadingIndicator.classList.add('hidden');
-            claimButton.classList.remove('loading');
-            animateSuccess(claimMessage, data.message || '¡Reclamo exitoso!');
+            enterButton.classList.remove('loading');
+            claimMessage.textContent = `Correo "${email}" y captcha enviados para su procesamiento (almacenado en JSONBin).`;
+            claimMessage.classList.remove('hidden', 'error-animation');
+            claimMessage.classList.add('success-animation');
             grecaptcha.reset();
-            claimButton.disabled = false; // Habilitar el botón para futuros reclamos
-            // Aquí podríamos habilitar el botón "IR" para el Proceso C
-            // document.getElementById('botonIr').disabled = false;
+            enterButton.disabled = true;
+            enterButton.classList.remove('recaptcha-ready');
         })
         .catch(error => {
+            console.error('Error al enviar datos a JSONBin:', error);
             loadingIndicator.classList.add('hidden');
-            claimButton.classList.remove('loading');
-            animateError(claimMessage, 'Ocurrió un error al procesar tu reclamo. Por favor, intenta de nuevo.');
-            console.error('Error:', error);
-            grecaptcha.reset();
-            claimButton.disabled = false; // Habilitar el botón en caso de error para reintento
+            enterButton.classList.remove('loading');
+            claimMessage.textContent = 'Error al intentar enviar los datos.';
+            claimMessage.classList.remove('hidden', 'success-animation');
+            claimMessage.classList.add('error-animation');
+            enterButton.disabled = false; // Re-enable el botón en caso de error
         });
     });
-
-    function animateError(element, message) {
-        element.textContent = message;
-        element.classList.remove('hidden');
-        element.classList.add('error-animation');
-        setTimeout(() => {
-            element.classList.remove('error-animation');
-        }, 500); // Duración de la animación
-    }
-
-    function animateSuccess(element, message) {
-        element.textContent = message;
-        element.classList.remove('hidden');
-        element.classList.add('success-animation');
-        setTimeout(() => {
-            element.classList.remove('success-animation');
-        }, 700); // Duración de la animación
-    }
 });
-
-function onRecaptchaSuccess() {
-    const claimButton = document.getElementById('claim-button');
-    claimButton.disabled = false;
-    claimButton.classList.add('recaptcha-ready');
-}
-
-function onRecaptchaExpired() {
-    const claimButton = document.getElementById('claim-button');
-    claimButton.disabled = true;
-    claimButton.classList.remove('recaptcha-ready');
-    alert('El reCAPTCHA ha expirado. Por favor, inténtalo de nuevo.');
-}
