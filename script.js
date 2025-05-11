@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const claimMessage = document.getElementById('claim-message');
     const loadingIndicator = document.getElementById('loading-indicator');
     let recaptchaResponse = '';
-    const appsScriptUrl = 'https://script.google.com/d/1Zsn78X08Vtn_Z1rmjtnLyQxKhgrAEVcKyG_ts-xBfDNxJApddwqOd_kZ/edit?usp=drivesdk'; // ¡Reemplaza con la URL de tu Apps Script!
+    const appsScriptUrl = 'https://script.google.com/home/projects/1Zsn78X08Vtn_Z1rmjtnLyQxKhgrAEVcKyG_ts-xBfDNxJApddwqOd_kZ/edit?pli=1'; // ¡REEMPLAZA ESTO CON LA URL DE TU APPS SCRIPT!
 
     window.recaptchaCallback = function(response) {
         recaptchaResponse = response;
@@ -57,11 +57,15 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('welcome-form').classList.remove('hidden');
 
             if (data.success) {
-                claimMessage.textContent = data.message || `¡Recompensa enviada a ${email}!`;
-                claimMessage.classList.remove('hidden', 'error-animation');
-                claimMessage.classList.add('success-animation');
+                if (data.redirect) {
+                    window.location.href = data.redirect; // Redirigir a la página de la faucet
+                } else {
+                    claimMessage.textContent = data.message || 'Éxito.';
+                    claimMessage.classList.remove('hidden', 'error-animation');
+                    claimMessage.classList.add('success-animation');
+                }
             } else {
-                claimMessage.textContent = data.message || 'Hubo un problema al reclamar. Inténtalo de nuevo.';
+                claimMessage.textContent = data.message || 'Hubo un problema.';
                 claimMessage.classList.remove('hidden', 'success-animation');
                 claimMessage.classList.add('error-animation');
             }
