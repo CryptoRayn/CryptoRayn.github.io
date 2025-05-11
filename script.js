@@ -1,84 +1,69 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     const emailInput = document.getElementById('email');
-    const captchaContainer = document.querySelector('.g-recaptcha');
-    const enterButton = document.getElementById('enterButton');
+    const claimButton = document.getElementById('claim-button');
     const claimMessage = document.getElementById('claim-message');
     const loadingIndicator = document.getElementById('loading-indicator');
-    const form = document.getElementById('welcome-form');
+    let recaptchaResponse = '';
 
-    // Reemplaza con tu clave de sitio de reCAPTCHA v2
-    const recaptchaSiteKey = '6Ldy5TUrAAAAAAsRymlIpZ6DNn0EVeX5-Khdkf2e';
-    // Reemplaza con la URL de tu bin de JSONBin (con permiso de escritura si es necesario)
-    const jsonBinUrl = 'https://api.jsonbin.io/v3/b/6820e2948a456b79669bbc76';
-    // Reemplaza con tu clave secreta de JSONBin si tu bin es privado
-    const jsonBinSecretKey = '$2a$10$I7hNfnunxNEJcGzxDK1FKON0j6z8F6pKkHvrEpxmTY.SINSjedb06'; // ¡MANTÉN ESTA CLAVE SEGURA!
-
-    window.enableButton = function() {
-        enterButton.disabled = false;
-        enterButton.classList.add('recaptcha-ready');
+    // Función para habilitar el botón una vez que el reCAPTCHA se haya resuelto
+    window.recaptchaCallback = function() {
+        recaptchaResponse = grecaptcha.getResponse();
+        claimButton.disabled = false;
+        claimButton.classList.add('recaptcha-ready');
     };
 
-    window.disableButton = function() {
-        enterButton.disabled = true;
-        enterButton.classList.remove('recaptcha-ready');
+    // Función para deshabilitar el botón si el reCAPTCHA expira o falla
+    window.recaptchaExpiredCallback = function() {
+        recaptchaResponse = '';
+        claimButton.disabled = true;
+        claimButton.classList.remove('recaptcha-ready');
+        alert('El reCAPTCHA ha expirado. Por favor, inténtalo de nuevo.');
     };
 
-    form.addEventListener('submit', function(event) {
-        event.preventDefault();
+    claimButton.addEventListener('click', function() {
         const email = emailInput.value;
-        const recaptchaResponse = grecaptcha.getResponse();
 
-        if (!recaptchaResponse) {
-            claimMessage.textContent = 'Por favor, completa el captcha.';
+        if (!email) {
+            claimMessage.textContent = 'Por favor, ingresa tu correo electrónico de FaucetPay.';
             claimMessage.classList.remove('hidden', 'success-animation');
             claimMessage.classList.add('error-animation');
             return;
         }
 
-        enterButton.disabled = true;
-        enterButton.classList.add('loading');
-        claimMessage.classList.add('hidden');
-        loadingIndicator.classList.remove('hidden');
-
-        const dataToSend = {
-            email: email,
-            recaptchaResponse: recaptchaResponse,
-            timestamp: new Date().toISOString()
-        };
-
-        fetch(jsonBinUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Master-Key': jsonBinSecretKey // Necesario si tu bin es privado
-            },
-            body: JSON.stringify(dataToSend)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Datos enviados a JSONBin:', data);
-            loadingIndicator.classList.add('hidden');
-            enterButton.classList.remove('loading');
-            claimMessage.textContent = `Correo "${email}" y captcha enviados para su procesamiento (almacenado en JSONBin).`;
-            claimMessage.classList.remove('hidden', 'error-animation');
-            claimMessage.classList.add('success-animation');
-            grecaptcha.reset();
-            enterButton.disabled = true;
-            enterButton.classList.remove('recaptcha-ready');
-        })
-        .catch(error => {
-            console.error('Error al enviar datos a JSONBin:', error);
-            loadingIndicator.classList.add('hidden');
-            enterButton.classList.remove('loading');
-            claimMessage.textContent = 'Error al intentar enviar los datos.';
+        if (!recaptchaResponse) {
+            claimMessage.textContent = 'Por favor, completa el reCAPTCHA.';
             claimMessage.classList.remove('hidden', 'success-animation');
             claimMessage.classList.add('error-animation');
-            enterButton.disabled = false; // Re-enable el botón en caso de error
-        });
+            return;
+        }
+
+        // Ocultar el formulario y mostrar el indicador de carga
+        document.getElementById('welcome-form').classList.add('hidden');
+        loadingIndicator.classList.remove('hidden');
+
+        // Simulación de una petición al servidor (reemplazar con tu lógica real)
+        setTimeout(function() {
+            loadingIndicator.classList.add('hidden');
+            document.getElementById('welcome-form').classList.remove('hidden');
+
+            // Simulación de éxito
+            if (Math.random() > 0.5) {
+                claimMessage.textContent = `¡Recompensa enviada a ${email}!`;
+                claimMessage.classList.remove('hidden', 'error-animation');
+                claimMessage.classList.add('success-animation');
+            } else {
+                // Simulación de error
+                claimMessage.textContent = 'Hubo un problema al reclamar. Inténtalo de nuevo.';
+                claimMessage.classList.remove('hidden', 'success-animation');
+                claimMessage.classList.add('error-animation');
+            }
+
+            // Resetear el reCAPTCHA
+            grecaptcha.reset();
+            recaptchaResponse = '';
+            claimButton.disabled = true;
+            claimButton.classList.remove('recaptcha-ready');
+
+        }, 3000); // Simula una espera de 3 segundos
     });
 });
