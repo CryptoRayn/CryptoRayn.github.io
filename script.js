@@ -7,11 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('welcome-form');
 
     // Reemplaza con tu clave de sitio de reCAPTCHA v2
-    const recaptchaSiteKey = 'TU_CLAVE_DE_SITIO_RECAPTCHA';
+    const recaptchaSiteKey = '6Ldy5TUrAAAAAAsRymlIpZ6DNn0EVeX5-Khdkf2e';
     // Reemplaza con la URL de tu bin de JSONBin (con permiso de escritura si es necesario)
-    const jsonBinUrl = 'https://api.jsonbin.io/v3/b/TU_ID_DE_BIN';
+    const jsonBinUrl = 'https://api.jsonbin.io/v3/b/6820e2948a456b79669bbc76';
     // Reemplaza con tu clave secreta de JSONBin si tu bin es privado
-    const jsonBinSecretKey = '$2b$10$TU_CLAVE_SECRETA_JSONBIN'; // ¡MANTÉN ESTA CLAVE SEGURA!
+    const jsonBinSecretKey = '$2a$10$I7hNfnunxNEJcGzxDK1FKON0j6z8F6pKkHvrEpxmTY.SINSjedb06'; // ¡MANTÉN ESTA CLAVE SEGURA!
 
     window.enableButton = function() {
         enterButton.disabled = false;
