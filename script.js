@@ -4,9 +4,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const claimMessage = document.getElementById('claim-message');
     const loadingIndicator = document.getElementById('loading-indicator');
     const container = document.querySelector('.container');
+    const recaptchaContainer = document.querySelector('.g-recaptcha');
+    const recaptchaSiteKey = process.env.RECAPTCHA_SITE_KEY_PUBLIC; // Nombre de la variable de entorno pública
 
     // Añadimos la clase 'loaded' al contenedor cuando el contenido esté cargado
     container.classList.add('loaded');
+
+    // Renderizar dinámicamente el reCAPTCHA con la clave del entorno
+    if (recaptchaContainer && recaptchaSiteKey) {
+        grecaptcha.render(recaptchaContainer, {
+            'sitekey': recaptchaSiteKey,
+            'callback': 'onRecaptchaSuccess',
+            'expired-callback': 'onRecaptchaExpired'
+        });
+    } else {
+        console.error('No se encontró el contenedor reCAPTCHA o la clave del sitio pública.');
+    }
 
     claimButton.addEventListener('click', function() {
         const email = emailInput.value;
@@ -27,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loadingIndicator.classList.remove('hidden');
         claimButton.classList.add('loading'); // Clase para cambiar el estilo del botón
 
-        fetch('https://crypto-rayn-github-io.vercel.app/api/claim', {
+        fetch('/api/claim', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
