@@ -4,15 +4,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const claimMessage = document.getElementById('claim-message');
     const loadingIndicator = document.getElementById('loading-indicator');
     let recaptchaResponse = '';
+    const appsScriptUrl = 'https://script.google.com/d/1Zsn78X08Vtn_Z1rmjtnLyQxKhgrAEVcKyG_ts-xBfDNxJApddwqOd_kZ/edit?usp=drivesdk'; // ¡Reemplaza con la URL de tu Apps Script!
 
-    // Función para habilitar el botón una vez que el reCAPTCHA se haya resuelto
-    window.recaptchaCallback = function() {
-        recaptchaResponse = grecaptcha.getResponse();
+    window.recaptchaCallback = function(response) {
+        recaptchaResponse = response;
         claimButton.disabled = false;
         claimButton.classList.add('recaptcha-ready');
     };
 
-    // Función para deshabilitar el botón si el reCAPTCHA expira o falla
     window.recaptchaExpiredCallback = function() {
         recaptchaResponse = '';
         claimButton.disabled = true;
@@ -41,19 +40,28 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('welcome-form').classList.add('hidden');
         loadingIndicator.classList.remove('hidden');
 
-        // Simulación de una petición al servidor (reemplazar con tu lógica real)
-        setTimeout(function() {
+        // Enviar datos al Google Apps Script
+        fetch(appsScriptUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                recaptchaResponse: recaptchaResponse
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
             loadingIndicator.classList.add('hidden');
             document.getElementById('welcome-form').classList.remove('hidden');
 
-            // Simulación de éxito
-            if (Math.random() > 0.5) {
-                claimMessage.textContent = `¡Recompensa enviada a ${email}!`;
+            if (data.success) {
+                claimMessage.textContent = data.message || `¡Recompensa enviada a ${email}!`;
                 claimMessage.classList.remove('hidden', 'error-animation');
                 claimMessage.classList.add('success-animation');
             } else {
-                // Simulación de error
-                claimMessage.textContent = 'Hubo un problema al reclamar. Inténtalo de nuevo.';
+                claimMessage.textContent = data.message || 'Hubo un problema al reclamar. Inténtalo de nuevo.';
                 claimMessage.classList.remove('hidden', 'success-animation');
                 claimMessage.classList.add('error-animation');
             }
@@ -63,7 +71,20 @@ document.addEventListener('DOMContentLoaded', function() {
             recaptchaResponse = '';
             claimButton.disabled = true;
             claimButton.classList.remove('recaptcha-ready');
+        })
+        .catch(error => {
+            loadingIndicator.classList.add('hidden');
+            document.getElementById('welcome-form').classList.remove('hidden');
+            claimMessage.textContent = 'Error de conexión con el servidor.';
+            claimMessage.classList.remove('hidden', 'success-animation');
+            claimMessage.classList.add('error-animation');
+            console.error('Error:', error);
 
-        }, 3000); // Simula una espera de 3 segundos
+            // Resetear el reCAPTCHA en caso de error
+            grecaptcha.reset();
+            recaptchaResponse = '';
+            claimButton.disabled = true;
+            claimButton.classList.remove('recaptcha-ready');
+        });
     });
 });
