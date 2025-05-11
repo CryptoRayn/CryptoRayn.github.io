@@ -5,8 +5,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingIndicator = document.getElementById('loading-indicator');
     const container = document.querySelector('.container');
     const recaptchaContainer = document.querySelector('.g-recaptcha');
-    const recaptchaSiteKey = process.env.RECAPTCHA_SITE_KEY_PUBLIC; // Nombre de la variable de entorno pública
-    console.log("Clave del sitio reCAPTCHA:", recaptchaSiteKey); // <--- AÑADE ESTA LÍNEA AQUÍ
+    const recaptchaSiteKey = window.RECAPTCHA_SITE_KEY_PUBLIC; // Obtenemos la variable global
+
+    console.log("Clave del sitio reCAPTCHA:", recaptchaSiteKey); // Verifica que la clave esté aquí
 
     // Añadimos la clase 'loaded' al contenedor cuando el contenido esté cargado
     container.classList.add('loaded');
