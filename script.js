@@ -5,23 +5,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingIndicator = document.getElementById('loading-indicator');
     const container = document.querySelector('.container');
     const recaptchaContainer = document.querySelector('.g-recaptcha');
-    const recaptchaSiteKey = window.RECAPTCHA_SITE_KEY_PUBLIC; // Obtenemos la variable global
-
-    console.log("Clave del sitio reCAPTCHA:", recaptchaSiteKey); // Verifica que la clave esté aquí
+    let recaptchaSiteKey = null; // Inicializamos como null
 
     // Añadimos la clase 'loaded' al contenedor cuando el contenido esté cargado
     container.classList.add('loaded');
 
-    // Renderizar dinámicamente el reCAPTCHA con la clave del entorno
-    if (recaptchaContainer && recaptchaSiteKey) {
-        grecaptcha.render(recaptchaContainer, {
+    // Obtener la clave del sitio desde el endpoint de la API
+    fetch('/api/recaptcha-site-key')
+      .then(response => response.json())
+      .then(data => {
+        recaptchaSiteKey = data.siteKey;
+        console.log("Clave del sitio reCAPTCHA obtenida del API:", recaptchaSiteKey);
+
+        // Renderizar dinámicamente el reCAPTCHA con la clave obtenida
+        if (recaptchaContainer && recaptchaSiteKey) {
+          grecaptcha.render(recaptchaContainer, {
             'sitekey': recaptchaSiteKey,
             'callback': 'onRecaptchaSuccess',
             'expired-callback': 'onRecaptchaExpired'
-        });
-    } else {
-        console.error('No se encontró el contenedor reCAPTCHA o la clave del sitio pública.');
-    }
+          });
+        } else {
+          console.error('No se encontró el contenedor reCAPTCHA o no se pudo obtener la clave del sitio.');
+        }
+      })
+      .catch(error => {
+        console.error('Error al obtener la clave del sitio reCAPTCHA:', error);
+      });
 
     claimButton.addEventListener('click', function() {
         const email = emailInput.value;
