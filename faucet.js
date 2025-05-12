@@ -4,14 +4,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const claimStatusElement = document.getElementById('claim-status');
     const timerInterval = 1000; // 1 segundo
     const claimIntervalHours = 1;
-    const appsScriptUrl = 'TU_URL_DE_LA_APLICACION_WEB'; // ¡REEMPLAZA CON LA URL DE TU APPS SCRIPT!
+    const appsScriptUrl = 'https://script.google.com/home/projects/1Zsn78X08Vtn_Z1rmjtnLyQxKhgrAEVcKyG_ts-xBfDNxJApddwqOd_kZ/edit?pli=1'; // ¡REEMPLAZA CON LA URL DE TU APPS SCRIPT!
     let timer;
+    let userEmail; // Variable para almacenar el correo electrónico del usuario
+
+    // Función para obtener el correo electrónico del usuario (necesitas implementarla)
+    function getUserEmail() {
+        // Esto es un ejemplo. En una implementación real, podrías obtenerlo de localStorage,
+        // una cookie o pasarlo como parámetro en la URL después del inicio de sesión.
+        return localStorage.getItem('faucetpayEmail');
+    }
 
     function updateTimerDisplay(remainingTime) {
         const hours = Math.floor(remainingTime / 3600);
         const minutes = Math.floor((remainingTime % 3600) / 60);
         const seconds = Math.floor(remainingTime % 60);
-        timeLeftElement.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        timeLeftElement.textContent = `<span class="math-inline">\{String\(hours\)\.padStart\(2, '0'\)\}\:</span>{String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
         if (remainingTime <= 0) {
             clearInterval(timer);
@@ -33,13 +41,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getLastClaimTime() {
+        userEmail = getUserEmail();
+        if (!userEmail) {
+            console.error('No se pudo obtener el correo electrónico del usuario.');
+            claimStatusElement.textContent = 'Error: No se pudo identificar al usuario.';
+            claimStatusElement.classList.remove('hidden');
+            return;
+        }
+
         fetch(appsScriptUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                action: 'getLastClaimTime'
+                action: 'getLastClaimTime',
+                email: userEmail
             })
         })
         .then(response => response.json())
@@ -50,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Si no hay hora de reclamo previa, permitir reclamar inmediatamente
                 claimNowButton.disabled = false;
                 timeLeftElement.textContent = 'Listo para reclamar';
-                console.log(data.message || 'No se encontró la última hora de reclamo.');
+                console.log(data.message || 'No se encontró la última hora de reclamo para este usuario.');
             }
         })
         .catch(error => {
@@ -63,6 +80,15 @@ document.addEventListener('DOMContentLoaded', function() {
     claimNowButton.addEventListener('click', function() {
         claimNowButton.disabled = true;
         timeLeftElement.textContent = 'Reclamando...';
+        userEmail = getUserEmail();
+        if (!userEmail) {
+            console.error('No se pudo obtener el correo electrónico del usuario.');
+            claimStatusElement.textContent = 'Error: No se pudo identificar al usuario para el reclamo.';
+            claimStatusElement.classList.remove('hidden');
+            claimNowButton.disabled = false;
+            timeLeftElement.textContent = 'Listo para reclamar';
+            return;
+        }
 
         fetch(appsScriptUrl, {
             method: 'POST',
@@ -70,7 +96,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                action: 'recordClaimTime'
+                action: 'recordClaimTime',
+                email: userEmail
             })
         })
         .then(response => response.json())
@@ -79,25 +106,4 @@ document.addEventListener('DOMContentLoaded', function() {
                 claimStatusElement.textContent = 'Reclamo exitoso. Espera 1 hora para el próximo reclamo.';
                 claimStatusElement.classList.remove('hidden', 'error-animation');
                 claimStatusElement.classList.add('success-animation');
-                getLastClaimTime(); // Volver a obtener la hora para iniciar el nuevo temporizador
-            } else {
-                claimStatusElement.textContent = data.message || 'Error al registrar el reclamo.';
-                claimStatusElement.classList.remove('hidden', 'success-animation');
-                claimStatusElement.classList.add('error-animation');
-                claimNowButton.disabled = false; // Re-habilitar el botón en caso de error
-                timeLeftElement.textContent = 'Listo para reclamar'; // Resetear visualización
-            }
-        })
-        .catch(error => {
-            console.error('Error al registrar la hora de reclamo:', error);
-            claimStatusElement.textContent = 'Error al conectar con el servidor.';
-            claimStatusElement.classList.remove('hidden', 'success-animation');
-            claimStatusElement.classList.add('error-animation');
-            claimNowButton.disabled = false; // Re-habilitar el botón en caso de error
-            timeLeftElement.textContent = 'Listo para reclamar'; // Resetear visualización
-        });
-    });
-
-    // Al cargar la página, obtener la última hora de reclamo
-    getLastClaimTime();
-});
+                getLastClaimTime(); // Volver a obtener la
