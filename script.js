@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
             claimMessage.classList.add('error-animation');
             console.error('Error:', error);
 
-            // Resetear el reCAPTCHA en caso de error
+            // Resetear el reCAPTCHA
             grecaptcha.reset();
             recaptchaResponse = '';
             claimButton.disabled = true;
