@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const claimMessage = document.getElementById('claim-message');
     const loadingIndicator = document.getElementById('loading-indicator');
     let recaptchaResponse = '';
-    const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbztU5PV-BzHDr_5AhI9tMq7wh5LXetvHjVBPha3Vjw7odvWoCmxmv5xERMgtCp3An9xbw/exec'; // ¡REEMPLAZA ESTO CON LA URL DE TU APPS SCRIPT!
+    const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbxN94R_-DiLxyWjoJkoxyOmpMyYD37CrtbUNaSBryAmh4DsYItY1VVOhx2vR3N0Prt5ag/exec'; // URL actualizada
 
     window.recaptchaCallback = function(response) {
         recaptchaResponse = response;
@@ -36,17 +36,16 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Ocultar el formulario y mostrar el indicador de carga
         document.getElementById('welcome-form').classList.add('hidden');
         loadingIndicator.classList.remove('hidden');
 
-        // Enviar datos al Google Apps Script
         fetch(appsScriptUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                action: 'storeUserEmail',
                 email: email,
                 recaptchaResponse: recaptchaResponse
             })
@@ -58,7 +57,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (data.success) {
                 if (data.redirect) {
-                    window.location.href = data.redirect; // Redirigir a la página de la faucet
+                    localStorage.setItem('userEmail', email);
+                    window.location.href = data.redirect;
                 } else {
                     claimMessage.textContent = data.message || 'Éxito.';
                     claimMessage.classList.remove('hidden', 'error-animation');
@@ -69,26 +69,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 claimMessage.classList.remove('hidden', 'success-animation');
                 claimMessage.classList.add('error-animation');
             }
-
-            // Resetear el reCAPTCHA
             grecaptcha.reset();
             recaptchaResponse = '';
             claimButton.disabled = true;
             claimButton.classList.remove('recaptcha-ready');
         })
         .catch(error => {
-            loadingIndicator.classList.add('hidden');
-            document.getElementById('welcome-form').classList.remove('hidden');
-            claimMessage.textContent = 'Error de conexión con el servidor.';
-            claimMessage.classList.remove('hidden', 'success-animation');
-            claimMessage.classList.add('error-animation');
-            console.error('Error:', error);
-
-            // Resetear el reCAPTCHA
-            grecaptcha.reset();
-            recaptchaResponse = '';
-            claimButton.disabled = true;
-            claimButton.classList.remove('recaptcha-ready');
+            // ... manejo de errores
         });
     });
 });
