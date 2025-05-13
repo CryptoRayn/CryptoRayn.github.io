@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const claimMessage = document.getElementById('claim-message');
     const loadingIndicator = document.getElementById('loading-indicator');
     let recaptchaResponse = '';
-    const appsScriptUrl = 'https://script.google.com/home/projects/1Zsn78X08Vtn_Z1rmjtnLyQxKhgrAEVcKyG_ts-xBfDNxJApddwqOd_kZ/edit?pli=1'; // ¡REEMPLAZA ESTO CON LA URL DE TU APPS SCRIPT!
+    const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbztU5PV-BzHDr_5AhI9tMq7wh5LXetvHjVBPha3Vjw7odvWoCmxmv5xERMgtCp3An9xbw/exec'; // ¡REEMPLAZA ESTO CON LA URL DE TU APPS SCRIPT!
 
     window.recaptchaCallback = function(response) {
         recaptchaResponse = response;
