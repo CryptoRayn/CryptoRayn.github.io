@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const claimNowButton = document.getElementById('claim-now-button');
     const claimStatusElement = document.getElementById('claim-status');
     const timerInterval = 1000;
-    const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbyI2AYg6-kmWuTvFoLNUpTrpY2axdceFSzwiVmcnIEVL1Jt2TuMf_QBpT7pLYkDOAxhCQ/exec'; // URL actualizada
+    const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbxyfFY_ne8PZxj5nrr7mFgGW8DZt3FFEffHOS2JmlHejrOEXU9bTaXUuZWg2RDJ3yaqng/exec'; // URL actualizada
     let timer;
     let userEmail = localStorage.getItem('userEmail');
 
