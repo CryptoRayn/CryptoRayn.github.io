@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const claimButton = document.getElementById('claim-button');
     const claimMessage = document.getElementById('claim-message');
     const loadingIndicator = document.getElementById('loading-indicator');
-    const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbztU5PV-BzHDr_5AhI9tMq7wh5LXetvHjVBPha3Vjw7odvWoCmxmv5xERMgtCp3An9xbw/exec'; // Asegúrate de que esta sea tu URL de la aplicación web
+    const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbxyfFY_ne8PZxj5nrr7mFgGW8DZt3FFEffHOS2JmlHejrOEXU9bTaXUuZWg2RDJ3yaqng/exec'; // Asegúrate de que esta sea tu URL de la aplicación web
 
     claimButton.addEventListener('click', function() {
         document.getElementById('welcome-form').classList.add('hidden');
