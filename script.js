@@ -56,13 +56,18 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('welcome-form').classList.remove('hidden');
 
             if (data.success) {
-                if (data.redirect) {
+                localStorage.setItem('userEmail', email);
+                window.location.href = data.redirect;
+            } else if (data.needsRegistration) {
+                const registerConfirmation = confirm(`El correo electrónico ${email} no está registrado. ¿Deseas registrarte?`);
+                if (registerConfirmation) {
+                    // Redirigir directamente a la faucet para el primer reclamo y el registro se hará allí
                     localStorage.setItem('userEmail', email);
-                    window.location.href = data.redirect;
+                    window.location.href = '/faucet';
                 } else {
-                    claimMessage.textContent = data.message || 'Éxito.';
-                    claimMessage.classList.remove('hidden', 'error-animation');
-                    claimMessage.classList.add('success-animation');
+                    claimMessage.textContent = 'Registro cancelado.';
+                    claimMessage.classList.remove('hidden', 'success-animation');
+                    claimMessage.classList.add('info-animation');
                 }
             } else {
                 claimMessage.textContent = data.message || 'Hubo un problema.';
@@ -75,7 +80,10 @@ document.addEventListener('DOMContentLoaded', function() {
             claimButton.classList.remove('recaptcha-ready');
         })
         .catch(error => {
-            // ... manejo de errores
+            console.error('Error al comunicarse con el servidor:', error);
+            claimMessage.textContent = 'Error al comunicarse con el servidor.';
+            claimMessage.classList.remove('hidden', 'success-animation');
+            claimMessage.classList.add('error-animation');
         });
     });
 });
