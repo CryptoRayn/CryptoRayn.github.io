@@ -1,4 +1,4 @@
-const ENDPOINT = "https://eof036in3p1ym4i.m.pipedream.net";
+const ENDPOINT = "https://eo4djuty2ygnmla.m.pipedream.net";
 
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("checkButton").addEventListener("click", checkEmail);
