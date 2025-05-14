@@ -4,51 +4,59 @@ const balanceDisplay = document.getElementById("balance");
 
 let balance = 0;
 
-function isValidLTC(address) {
-  return /^([LM3][a-km-zA-HJ-NP-Z1-9]{26,33}|ltc1[qpzry9x8gf2tvdw0s3jn54khce6mua7l]{39,59})$/.test(address);
+// Validación básica de dirección Dogecoin (empieza con D o A y longitud adecuada)
+function isValidDOGE(address) {
+  return /^[DA9][a-km-zA-HJ-NP-Z1-9]{25,34}$/.test(address);
 }
 
+// Validación de correos @gmail.com
 function isValidGmail(email) {
   return /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
 }
 
-async function checkLTCAddressExists(address) {
+// Verificar en red si la dirección Dogecoin ha sido usada (usando BlockCypher)
+async function checkDOGEAddressExists(address) {
   try {
-    const response = await fetch(`https://api.blockcypher.com/v1/ltc/main/addrs/${address}`);
+    const response = await fetch(`https://api.blockcypher.com/v1/doge/main/addrs/${address}`);
     const data = await response.json();
 
-    if (data && data.txrefs && data.txrefs.length > 0) {
-      return true; // Tiene transacciones
-    } else if (data && data.final_balance !== undefined) {
-      return data.final_balance > 0; // Puede tener saldo sin txrefs (vacío de tx pero con saldo inicial)
-    } else {
-      return false;
+    // Si tiene transacciones, ha sido usada
+    if (data && (data.txrefs || data.unconfirmed_txrefs)) {
+      return true;
     }
+
+    // Si tiene saldo positivo, también consideramos válida
+    if (data && data.final_balance > 0) {
+      return true;
+    }
+
+    return false;
   } catch (error) {
-    console.error("Error consultando BlockCypher:", error);
+    console.error("Error consultando BlockCypher para DOGE:", error);
     return false;
   }
 }
 
+// Manejar el formulario
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
 
-  const ltcAddress = document.getElementById("ltcAddress").value.trim();
+  const dogeAddress = document.getElementById("cryptoAddress").value.trim();
   const email = document.getElementById("email").value.trim();
 
-  if (!isValidLTC(ltcAddress)) {
-    alert("Dirección LTC inválida.");
+  if (!isValidDOGE(dogeAddress)) {
+    alert("Dirección DOGE inválida.");
     return;
   }
 
   if (!isValidGmail(email)) {
-    alert("Correo inválido. Solo se aceptan direcciones @gmail.com.");
+    alert("Solo se permiten correos @gmail.com.");
     return;
   }
 
-  const exists = await checkLTCAddressExists(ltcAddress);
+  const exists = await checkDOGEAddressExists(dogeAddress);
   if (!exists) {
-    alert("La dirección LTC no se encuentra activa en la red.");
+    alert("La dirección DOGE no ha sido usada o no tiene actividad visible.");
     return;
   }
 
@@ -56,8 +64,9 @@ form.addEventListener("submit", async function (e) {
   dashboard.classList.remove("hidden");
 });
 
+// Simulación de depósitos y retiros
 function deposit() {
-  balance += 0.001;
+  balance += 1; // 1 DOGE
   updateBalance();
 }
 
@@ -66,10 +75,10 @@ function withdraw() {
     alert("Saldo insuficiente.");
     return;
   }
-  balance -= 0.001;
+  balance -= 1;
   updateBalance();
 }
 
 function updateBalance() {
-  balanceDisplay.textContent = balance.toFixed(8);
+  balanceDisplay.textContent = balance.toFixed(2) + " DOGE";
 }
