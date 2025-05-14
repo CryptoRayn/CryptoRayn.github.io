@@ -3,37 +3,48 @@ const dashboard = document.getElementById("dashboard");
 const balanceDisplay = document.getElementById("balance");
 
 let balance = 0;
+const apiKey = "655e8722ec1eb50cc80fde5b22ec208341a3cb5f7d05bf3edee381ee52ae5808"; // Tu API Key de FaucetPay
 
-// Validación básica de dirección Dogecoin (empieza con D o A y longitud adecuada)
-function isValidDOGE(address) {
-  return /^[DA9][a-km-zA-HJ-NP-Z1-9]{25,34}$/.test(address);
+// Validación básica de dirección Litecoin (LTC), soportando ambos formatos: estándar y Bech32
+function isValidLTC(address) {
+  // Direcciones LTC estándar (empiezan con L o M)
+  const standardLTC = /^[LM3][a-km-zA-HJ-NP-Z1-9]{26,33}$/;
+  // Direcciones Bech32 (empiezan con ltc1)
+  const bech32LTC = /^ltc1[qpzry9x8gf2tvdw0s3jn54khce6mua7l]{39,59}$/;
+
+  return standardLTC.test(address) || bech32LTC.test(address);
 }
 
-// Validación de correos @gmail.com
-function isValidGmail(email) {
-  return /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
-}
-
-// Verificar en red si la dirección Dogecoin ha sido usada (usando BlockCypher)
-async function checkDOGEAddressExists(address) {
+// Verificar en FaucetPay si la dirección Litecoin pertenece a un usuario
+async function checkFaucetPayAddress(address) {
   try {
-    const response = await fetch(`https://api.blockcypher.com/v1/doge/main/addrs/${address}`);
+    const response = await fetch("https://faucetpay.io/api/v1/checkaddress", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        api_key: apiKey,
+        address: address
+      })
+    });
+
     const data = await response.json();
 
-    // Si tiene transacciones, ha sido usada
-    if (data && (data.txrefs || data.unconfirmed_txrefs)) {
-      return true;
+    if (data.status === 200) {
+      console.log("Dirección vinculada a un usuario. Hash:", data.payout_user_hash);
+      return data.payout_user_hash;
+    } else if (data.status === 456) {
+      console.warn("La dirección no está vinculada a ningún usuario.");
+      return null;
+    } else {
+      console.error("Error en la respuesta de la API:", data.message);
+      return null;
     }
 
-    // Si tiene saldo positivo, también consideramos válida
-    if (data && data.final_balance > 0) {
-      return true;
-    }
-
-    return false;
   } catch (error) {
-    console.error("Error consultando BlockCypher para DOGE:", error);
-    return false;
+    console.error("Error al consultar la API de FaucetPay:", error);
+    return null;
   }
 }
 
@@ -41,32 +52,28 @@ async function checkDOGEAddressExists(address) {
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
 
-  const dogeAddress = document.getElementById("cryptoAddress").value.trim();
-  const email = document.getElementById("email").value.trim();
+  const ltcAddress = document.getElementById("ltcAddress").value.trim();
 
-  if (!isValidDOGE(dogeAddress)) {
-    alert("Dirección DOGE inválida.");
+  if (!isValidLTC(ltcAddress)) {
+    alert("Dirección LTC inválida.");
     return;
   }
 
-  if (!isValidGmail(email)) {
-    alert("Solo se permiten correos @gmail.com.");
+  // Verificar que la dirección está asociada a un usuario en FaucetPay
+  const payoutUserHash = await checkFaucetPayAddress(ltcAddress);
+  if (!payoutUserHash) {
+    alert("La dirección LTC no está registrada en FaucetPay.");
     return;
   }
 
-  const exists = await checkDOGEAddressExists(dogeAddress);
-  if (!exists) {
-    alert("La dirección DOGE no ha sido usada o no tiene actividad visible.");
-    return;
-  }
-
+  // Si la dirección es válida y está registrada, mostramos el dashboard
   form.classList.add("hidden");
   dashboard.classList.remove("hidden");
 });
 
 // Simulación de depósitos y retiros
 function deposit() {
-  balance += 1; // 1 DOGE
+  balance += 1; // 1 LTC
   updateBalance();
 }
 
@@ -80,5 +87,5 @@ function withdraw() {
 }
 
 function updateBalance() {
-  balanceDisplay.textContent = balance.toFixed(2) + " DOGE";
+  balanceDisplay.textContent = balance.toFixed(2) + " LTC";
 }
