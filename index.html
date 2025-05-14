@@ -1,18 +1,36 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Verificar Correo FaucetPay</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Probar Webhook Make</title>
 </head>
 <body>
-  <div class="container">
-    <h1>Verificar Correo en FaucetPay</h1>
-    <input type="email" id="email" placeholder="Introduce tu correo" />
-    <button onclick="checkEmail()">Verificar</button>
-    <p id="result"></p>
-  </div>
-  <script src="script.js"></script>
+  <h3>Enviar prueba a Webhook de Make</h3>
+  <button onclick="enviarPrueba()">Enviar email de prueba</button>
+  <p id="resultado"></p>
+
+  <script>
+    function enviarPrueba() {
+      const webhookUrl = "https://hook.us2.make.com/ldpdob431873o77466jrkaeq4u0qo1l1"; // tu webhook
+
+      fetch(webhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: "prueba@correo.com" })
+      })
+      .then(res => {
+        if (res.ok) {
+          document.getElementById("resultado").textContent = "✅ Enviado con éxito.";
+        } else {
+          document.getElementById("resultado").textContent = "❌ Error en el envío.";
+        }
+      })
+      .catch(err => {
+        document.getElementById("resultado").textContent = "❌ Error de red o CORS.";
+      });
+    }
+  </script>
 </body>
 </html>
