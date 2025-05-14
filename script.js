@@ -4,34 +4,32 @@ const balanceDisplay = document.getElementById("balance");
 
 let balance = 0;
 
-// Validar formato de dirección Litecoin (comienza con L, M o 3 y tiene longitud adecuada)
 function isValidLTC(address) {
-  return /^([LM3][a-km-zA-HJ-NP-Z1-9]{26,33})$/.test(address);
+  return /^([LM3][a-km-zA-HJ-NP-Z1-9]{26,33}|ltc1[qpzry9x8gf2tvdw0s3jn54khce6mua7l]{39,59})$/.test(address);
 }
 
-// Validar correo electrónico que sea @gmail.com
 function isValidGmail(email) {
   return /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
 }
 
-// Verifica si la dirección LTC tiene transacciones en la blockchain (usando SoChain API)
 async function checkLTCAddressExists(address) {
   try {
-    const response = await fetch(`https://sochain.com/api/v2/address/LTC/${address}`);
+    const response = await fetch(`https://api.blockcypher.com/v1/ltc/main/addrs/${address}`);
     const data = await response.json();
 
-    if (data.status === "success" && data.data.total_txs > 0) {
-      return true; // Dirección activa en la red
+    if (data && data.txrefs && data.txrefs.length > 0) {
+      return true; // Tiene transacciones
+    } else if (data && data.final_balance !== undefined) {
+      return data.final_balance > 0; // Puede tener saldo sin txrefs (vacío de tx pero con saldo inicial)
     } else {
-      return false; // No tiene transacciones
+      return false;
     }
   } catch (error) {
-    console.error("Error consultando SoChain:", error);
+    console.error("Error consultando BlockCypher:", error);
     return false;
   }
 }
 
-// Evento del formulario al enviar
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
 
@@ -39,44 +37,39 @@ form.addEventListener("submit", async function (e) {
   const email = document.getElementById("email").value.trim();
 
   if (!isValidLTC(ltcAddress)) {
-    alert("Dirección LTC inválida. Asegúrate de que sea una dirección Litecoin válida.");
+    alert("Dirección LTC inválida.");
     return;
   }
 
   if (!isValidGmail(email)) {
-    alert("Correo inválido. Solo se permiten direcciones @gmail.com.");
+    alert("Correo inválido. Solo se aceptan direcciones @gmail.com.");
     return;
   }
 
-  // Verifica si la dirección existe en la red
   const exists = await checkLTCAddressExists(ltcAddress);
   if (!exists) {
-    alert("La dirección LTC no existe o nunca ha sido utilizada en la blockchain.");
+    alert("La dirección LTC no se encuentra activa en la red.");
     return;
   }
 
-  // Mostrar dashboard
   form.classList.add("hidden");
   dashboard.classList.remove("hidden");
 });
 
-// Simulación de depósito
 function deposit() {
   balance += 0.001;
   updateBalance();
 }
 
-// Simulación de retiro
 function withdraw() {
   if (balance <= 0) {
-    alert("Saldo insuficiente para retirar.");
+    alert("Saldo insuficiente.");
     return;
   }
   balance -= 0.001;
   updateBalance();
 }
 
-// Actualiza el saldo visual
 function updateBalance() {
   balanceDisplay.textContent = balance.toFixed(8);
 }
