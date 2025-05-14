@@ -1,47 +1,31 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const claimButton = document.getElementById('claim-button');
-    const claimMessage = document.getElementById('claim-message');
-    const loadingIndicator = document.getElementById('loading-indicator');
-    const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbxyfFY_ne8PZxj5nrr7mFgGW8DZt3FFEffHOS2JmlHejrOEXU9bTaXUuZWg2RDJ3yaqng/exec'; // Asegúrate de que esta sea tu URL de la aplicación web
-
-    claimButton.addEventListener('click', function() {
-        document.getElementById('welcome-form').classList.add('hidden');
-        loadingIndicator.classList.remove('hidden');
-        claimMessage.classList.add('hidden'); // Ocultar mensajes anteriores
-
-        fetch(appsScriptUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                action: 'testConnection'
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            loadingIndicator.classList.add('hidden');
-            document.getElementById('welcome-form').classList.remove('hidden');
-            claimMessage.classList.remove('hidden');
-
-            if (data.success) {
-                claimMessage.textContent = data.message;
-                claimMessage.classList.remove('error-animation');
-                claimMessage.classList.add('success-animation');
-            } else {
-                claimMessage.textContent = data.message;
-                claimMessage.classList.remove('success-animation');
-                claimMessage.classList.add('error-animation');
-            }
-        })
-        .catch(error => {
-            loadingIndicator.classList.add('hidden');
-            document.getElementById('welcome-form').classList.remove('hidden');
-            claimMessage.classList.remove('hidden');
-            claimMessage.textContent = 'Error al conectar con el backend.';
-            claimMessage.classList.remove('success-animation');
-            claimMessage.classList.add('error-animation');
-            console.error('Error de conexión:', error);
-        });
-    });
-});
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Faucet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>¡Cryptorayn!</h1>
+        <div id="welcome-form">
+            <label for="email">Tu Correo Electrónico de FaucetPay:</label>
+            <input type="email" id="email" placeholder="Ingresa tu correo electrónico de FaucetPay">
+            <button id="login-button">Continuar</button>
+            <p id="login-message" class="hidden"></p>
+        </div>
+        <div id="captcha-container" class="hidden">
+            <h2>Verificación</h2>
+            <p id="captcha-question"></p>
+            <input type="text" id="captcha-answer" placeholder="Ingresa la respuesta">
+            <button id="verify-button">Verificar</button>
+            <p id="captcha-message" class="hidden"></p>
+        </div>
+        <div id="loading-indicator" class="hidden">
+            Cargando...
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
