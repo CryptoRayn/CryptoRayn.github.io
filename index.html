@@ -1,29 +1,28 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CryptoRayn Litecoin Faucet</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faucet Simulada</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
   <div class="container">
-    <h1>Faucet Simulada de Litecoin</h1>
+    <h1>Bienvenido a la Faucet Simulada</h1>
+
     <form id="faucetForm">
-      <label for="ltcAddress">Dirección Litecoin:</label>
-      <input type="text" id="ltcAddress" placeholder="Ingrese su dirección LTC" required />
-
-      <label for="email">Correo Gmail:</label>
-      <input type="email" id="email" placeholder="nombre@gmail.com" required />
-
-      <button type="submit">Conectar</button>
+      <label for="ltcAddress">Dirección LTC:</label>
+      <input type="text" id="ltcAddress" placeholder="Introduce tu dirección LTC" required>
+      <button type="submit">Verificar</button>
     </form>
 
-    <div id="dashboard" class="hidden">
-      <p><strong>Saldo:</strong> <span id="balance">0.00000000</span> LTC</p>
-      <button onclick="deposit()">Depositar (simulado)</button>
-      <button onclick="withdraw()">Retirar (simulado)</button>
-    </div>
+    <section id="dashboard" class="hidden">
+      <h2>Dashboard</h2>
+      <p>Saldo: <span id="balance">0.00 LTC</span></p>
+      <button onclick="deposit()">Depositar</button>
+      <button onclick="withdraw()">Retirar</button>
+    </section>
   </div>
 
   <script src="script.js"></script>
