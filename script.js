@@ -1,39 +1,7 @@
-const ENDPOINT = "https://eo4djuty2ygnmla.m.pipedream.net";
-
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("checkButton").addEventListener("click", checkEmail);
+fetch("https://hook.us2.make.com/ldpdob431873o77466jrkaeq4u0qo1l1", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ email: "prueba@correo.com" })
 });
-
-function checkEmail() {
-  const email = document.getElementById("email").value.trim();
-  const result = document.getElementById("result");
-
-  if (!email) {
-    result.textContent = "Por favor, introduce un correo electrónico.";
-    result.style.color = "red";
-    return;
-  }
-
-  result.textContent = "Verificando...";
-  result.style.color = "black";
-
-  fetch(`${ENDPOINT}?email=${encodeURIComponent(email)}`)
-    .then((res) => res.json())
-    .then((data) => {
-      // Como la respuesta de Pipedream está en `body`, accedemos así:
-      const body = data.body;
-
-      if (body?.status === 200 && body.user?.email) {
-        result.textContent = `✅ Correo registrado: ${body.user.email}`;
-        result.style.color = "green";
-      } else {
-        result.textContent = "❌ El correo NO está registrado en FaucetPay.";
-        result.style.color = "red";
-      }
-    })
-    .catch((error) => {
-      console.error("Error al contactar:", error);
-      result.textContent = "Error al contactar con el servidor.";
-      result.style.color = "red";
-    });
-}
