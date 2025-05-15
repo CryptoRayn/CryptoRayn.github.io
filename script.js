@@ -1,5 +1,5 @@
 // ==================== ⚙️ Configuración ====================
-const modoTest = false; // 🧪 ¡Eliminar en producción!
+const modoTest = true; // 🧪 ¡Eliminar en producción!
 const faucetpayApiKey = "655e8722ec1eb50cc80fde5b22ec208341a3cb5f7d05bf3edee381ee52ae5808"; // 🧪 Solo para modoTest
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -8,25 +8,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultDiv = document.getElementById('result');
   const irButton = document.getElementById('irButton');
   const recaptchaContainer = document.getElementById('recaptcha-container');
-
+  
   checkButton.addEventListener('click', async () => {
     const ltcAddress = ltcAddressInput.value.trim();
-
+    
     if (!ltcAddress) {
       resultDiv.textContent = 'Por favor, ingresa una dirección LTC.';
       resultDiv.className = 'result-error';
       resultDiv.classList.remove('result-hidden');
       return;
     }
-
+    
     resultDiv.textContent = 'Verificando...';
     resultDiv.className = '';
     resultDiv.classList.remove('result-hidden');
     irButton.disabled = true;
     recaptchaContainer.style.display = 'none';
-
+    
     let apiKey = '';
-
+    
     if (modoTest) {
       apiKey = faucetpayApiKey; // 🧪 API fija para desarrollo
     } else {
@@ -39,13 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
     }
-
+    
     validarDireccionConFaucetPay(ltcAddress, apiKey);
   });
-
+  
   async function validarDireccionConFaucetPay(ltcAddress, apiKey) {
     const apiUrl = 'https://faucetpay.io/api/v1/checkaddress';
-
+    
     try {
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -54,14 +54,15 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         body: `api_key=${encodeURIComponent(apiKey)}&address=${encodeURIComponent(ltcAddress)}`
       });
-
+      
       const data = await response.json();
       resultDiv.classList.remove('result-hidden');
-
+      
       if (data.status === 200) {
-        resultDiv.textContent = `✅ Dirección válida. Hash: ${data.payout_user_hash}`;
+        // Aquí no mostramos el hash, solo indicamos éxito
+        resultDiv.textContent = `✅ Dirección válida. Puedes continuar.`;
         resultDiv.className = 'result-success';
-        irButton.disabled = false;
+        irButton.disabled = true; // deshabilitar hasta resolver captcha
         recaptchaContainer.style.display = 'block';
       } else if (data.status === 456) {
         resultDiv.textContent = '❌ La dirección no pertenece a ningún usuario de FaucetPay.';
@@ -78,9 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Error al verificar dirección:', error);
       resultDiv.textContent = '❌ Error de red al verificar.';
       resultDiv.className = 'result-error';
+      irButton.disabled = true;
+      recaptchaContainer.style.display = 'none';
     }
   }
-
+  
   // 🔐 Solo se usa en producción
   async function obtenerApiKeyProtegida() {
     return new Promise((resolve, reject) => {
@@ -90,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
           resolve(window.fpkResult.trim());
         }
       }, 300);
-
+      
       setTimeout(() => {
         clearInterval(espera);
         reject('Timeout: sin respuesta');
@@ -98,3 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// Función llamada por el callback del reCAPTCHA para activar el botón "ir"
+function onRecaptchaSuccess() {
+  const irButton = document.getElementById('irButton');
+  irButton.disabled = false;
+}
