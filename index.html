@@ -1,30 +1,23 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Faucet Simulada</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Verificar Dirección LTC</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
-
   <div class="container">
-    <h1>Bienvenido a la Faucet Simulada</h1>
-
-    <form id="faucetForm">
-      <label for="ltcAddress">Dirección LTC:</label>
-      <input type="text" id="ltcAddress" placeholder="Introduce tu dirección LTC" required>
-      <button type="submit">Verificar</button>
-    </form>
-
-    <section id="dashboard" class="hidden">
-      <h2>Dashboard</h2>
-      <p>Saldo: <span id="balance">0.00 LTC</span></p>
-      <button onclick="deposit()">Depositar</button>
-      <button onclick="withdraw()">Retirar</button>
-    </section>
+    <h1>Verificar LTC en FaucetPay</h1>
+    <input type="text" id="ltcAddress" placeholder="Ingresa tu dirección LTC">
+    <button id="checkBtn">Verificar</button>
+    <div id="result" class="result-hidden"></div>
+    <div id="recaptcha-container" style="display: none;">
+      <div class="g-recaptcha" data-sitekey="6Ldy5TUrAAAAAAsRymlIpZ6DNn0EVeX5-Khdkf2e"></div>
+    </div>
+    <button id="irButton" disabled>Ir</button>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
