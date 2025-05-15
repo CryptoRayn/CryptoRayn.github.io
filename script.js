@@ -1,5 +1,5 @@
 // ==================== ⚙️ Configuración ====================
-const modoTest = true; // 🧪 ¡Eliminar en producción!
+const modoTest = false; // 🧪 ¡Eliminar en producción!
 const faucetpayApiKey = "655e8722ec1eb50cc80fde5b22ec208341a3cb5f7d05bf3edee381ee52ae5808"; // 🧪 Solo para modoTest
 
 document.addEventListener('DOMContentLoaded', () => {
