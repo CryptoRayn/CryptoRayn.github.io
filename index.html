@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Con Libertex tradear es más fácil</title>
+  <meta name="description" content="Invierte desde $10 y gana hasta $200 con Libertex. Guía rápida, señales y bono promocional.">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Con solo invertir desde $10 puedes ganar hasta $200</h1>
+    <p style="font-size: 1.4em; color: #ffc107;">Entra aquí👇</p>
+    <a href="https://app.libertex.org/goto/raf2?rid=13177005" class="cta-animated-btn" target="_blank">
+      ¡Sigue los pasos y comienza a ganar!
+    </a>
+  </header>
+
+  <main>
+    <section id="benefits">
+      <h2>¿Por qué Libertex?</h2>
+      <ul>
+        <li>Depósito mínimo de solo <strong>$10</strong></li>
+        <li>Medios de pago: <strong>tarjeta, transferencia, USDT, BTC, Skrill, Neteller</strong></li>
+        <li><strong>Bono de hasta $200</strong> usando el código <strong>gif</strong> en tu primer depósito</li>
+        <li>Más de 250 activos: Forex, Cripto, Acciones y más</li>
+      </ul>
+    </section>
+
+    <section id="steps">
+      <h2>Guía rápida</h2>
+      <ol>
+        <li><strong>Haz clic en el botón para ir al broker👆</strong></li>
+        <li><strong>Deposita al menos $10</strong> usando tu método preferido💵</li>
+        <li><strong>Ingresa el código promocional:</strong> <code>gif🎁</code></li>
+        <li><strong>Sigue las señales del marcador</strong> y comienza a tradear〽️</li>
+      </ol>
+    </section>
+
+    <section id="signals">
+      <h2>Señales de Trading útiles hoy</h2>
+      <div id="tradingview-widget" class="tradingview-widget-container"></div>
+    </section>
+
+    <section id="market-panel">
+      <h2>Mercado en tiempo real</h2>
+      <div class="tradingview-widget-container">
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+        {
+          "colorTheme": "light",
+          "dateRange": "12M",
+          "showChart": true,
+          "locale": "es",
+          "width": "100%",
+          "height": "600",
+          "tabs": [
+            {
+              "title": "Forex",
+              "symbols": [
+                { "s": "FX:EURUSD", "d": "EUR/USD" },
+                { "s": "FX:GBPUSD", "d": "GBP/USD" },
+                { "s": "FX:USDJPY", "d": "USD/JPY" }
+              ]
+            },
+            {
+              "title": "Criptomonedas",
+              "symbols": [
+                { "s": "BINANCE:BTCUSDT", "d": "Bitcoin" },
+                { "s": "BINANCE:ETHUSDT", "d": "Ethereum" },
+                { "s": "BINANCE:XRPUSDT", "d": "Ripple" }
+              ]
+            }
+          ]
+        }
+        </script>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Para ganar desde aquí, usa el código <strong>gif</strong>. Esta no es una página oficial de Libertex.</p>
+  </footer>
+
+  <script>
+    const jsonBinId = "6820e2948a456b79669bbc76";
+    const jsonBinMasterKey = "$2a$10$I7hNfnunxNEJcGzxDK1FKON0j6z8F6pKkHvrEpxmTY.SINSjedb06";
+    const jsonBinAccessKey = "$2a$10$ooL0KV4Ftd6YOcL1X0/I2OTNSg6tcZuEM9ksAgp9AIHLctg1ZsHuS";
+
+    const assetGroups = [
+      ["FX:EURUSD", "BINANCE:BTCUSDT", "NASDAQ:AAPL"],
+      ["FX:GBPUSD", "BINANCE:ETHUSDT", "NYSE:TSLA"],
+      ["FX:USDJPY", "BINANCE:XRPUSDT", "NYSE:AMZN"],
+      ["FOREX:USDCHF", "BINANCE:DOTUSDT", "NASDAQ:MSFT"],
+      ["FOREX:USDCAD", "BINANCE:LTCUSDT", "NYSE:GOOGL"]
+    ];
+
+    const intervalMs = 4 * 60 * 60 * 1000;
+
+    async function fetchCurrentIndex() {
+      try {
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${jsonBinId}/latest`, {
+          headers: { 'X-Access-Key': jsonBinAccessKey }
+        });
+        if (!res.ok) throw new Error("Error leyendo jsonbin");
+        const data = await res.json();
+        return data.record.currentIndex || 0;
+      } catch(e) {
+        console.error("Error fetchCurrentIndex:", e);
+        return 0;
+      }
+    }
+
+    async function updateCurrentIndex(newIndex) {
+      try {
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${jsonBinId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Master-Key": jsonBinMasterKey
+          },
+          body: JSON.stringify({ currentIndex: newIndex })
+        });
+        if (!res.ok) throw new Error("Error actualizando jsonbin");
+        return true;
+      } catch(e) {
+        console.error("Error updateCurrentIndex:", e);
+        return false;
+      }
+    }
+
+    function createWidget(symbol) {
+      const container = document.getElementById('tradingview-widget');
+      container.innerHTML = "";
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = "https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js";
+      script.async = true;
+      script.text = JSON.stringify({
+        interval: "1h",
+        width: "100%",
+        isTransparent: false,
+        height: 450,
+        symbol: symbol,
+        showIntervalTabs: true,
+        locale: "es",
+        colorTheme: "light"
+      });
+      container.appendChild(script);
+    }
+
+    async function main() {
+      const lastUpdate = localStorage.getItem('lastUpdateTimestamp');
+      const now = Date.now();
+
+      let currentIndex = await fetchCurrentIndex();
+
+      if (!lastUpdate || (now - lastUpdate) > intervalMs) {
+        let newIndex = (currentIndex + 1) % assetGroups.length;
+        const success = await updateCurrentIndex(newIndex);
+        if(success) {
+          currentIndex = newIndex;
+          localStorage.setItem('lastUpdateTimestamp', now);
+        }
+      }
+
+      createWidget(assetGroups[currentIndex][0]);
+    }
+
+    main();
+  </script>
+</body>
+</html>
