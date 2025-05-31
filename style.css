@@ -1,0 +1,87 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f7f7f7;
+  color: #333;
+}
+
+header p {
+  font-size: 1.8em;
+  color: #ffbb00; /* Puedes cambiar a otro color si prefieres */
+  margin-top: 0.5em;
+}
+
+
+header {
+  text-align: center;
+  padding: 2em;
+  background: #212121;
+  color: white;
+}
+
+.cta-animated-btn {
+  display: inline-block;
+  margin-top: 1.5em;
+  padding: 1em 2em;
+  background: linear-gradient(45deg, #ff6b00, #ffbb00);
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.2em;
+  border-radius: 8px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  animation: pulse 2s infinite;
+}
+
+.cta-animated-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 187, 0, 0.6);
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0px rgba(255, 187, 0, 0.4); }
+  50% { box-shadow: 0 0 20px rgba(255, 187, 0, 0.8); }
+  100% { box-shadow: 0 0 0px rgba(255, 187, 0, 0.4); }
+}
+
+/* Tamaño de fuente ampliado para beneficios y guía */
+#benefits h2 {
+  font-size: 2em;
+  margin-bottom: 0.5em;
+  color: #333;
+}
+
+#benefits li {
+  font-size: 1.4em;
+  margin-bottom: 0.5em;
+}
+
+#benefits li strong {
+  font-size: 1.5em;
+}
+
+/* Estilo especial para la sección Guía rápida */
+#steps {
+  background-color: #e3f2fd; /* azul muy claro */
+  padding: 1em 2em;
+  border-radius: 8px;
+  margin: 2em 0;
+}
+
+#steps h2 {
+  font-size: 2em;
+  margin-bottom: 0.5em;
+  color: #1565c0; /* azul más oscuro para el título */
+}
+
+#steps li {
+  font-size: 1.4em;
+  margin-bottom: 0.5em;
+  color: #0d47a1; /* azul oscuro para el texto */
+}
+
+#steps li strong {
+  font-size: 1.5em;
+  color: #0d47a1;
+}
